@@ -1,2 +1,4 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1 class="bg-red">Welcome to our games :33</h1>
+<ul>
+    <li><a href="/tictactoe">TicTacToe</a></li>
+</ul>

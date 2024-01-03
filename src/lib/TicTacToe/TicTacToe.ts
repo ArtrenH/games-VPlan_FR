@@ -83,7 +83,7 @@ export class Board extends HasWinner {
         if (this.depth === 1) {
             this.enableAvailable()
         } else {
-            let currField = this.sharedGameState.lastMoves[this.sharedGameState.lastMoves.length - this.depth];
+            let currField = this.sharedGameState.lastMoves[this.sharedGameState.lastMoves.length - this.depth + 1];
             if (typeof currField === "undefined") { // board was just initialized, not enough moves were made
                 this.fields.forEach(field => (field as Board).enableFields());
             } else {
@@ -128,7 +128,7 @@ export class Board extends HasWinner {
         this._doMove(fieldNums);
         if (this.sharedGameState.lastMoves.length === 0) {
             console.log(fieldNums);
-            this.sharedGameState.lastMoves = fieldNums.slice(1);
+            this.sharedGameState.lastMoves = fieldNums;
         } else {
             this.sharedGameState.lastMoves.push(fieldNums[fieldNums.length-1]);
         }

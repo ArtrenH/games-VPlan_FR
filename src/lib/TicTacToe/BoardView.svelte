@@ -19,16 +19,16 @@
         {#each {length: 3} as _, row}
             <div class="flex flex-row flex-1">
                 {#each {length: 3} as _, col}
-                    <div class="flex flex-1 justify-center items-stretch border-black border-[1px]">
+                    <div class="flex flex-1 justify-center items-stretch border-gray-800 border-[1px]">
                         <!--<span class="">{winnerToString(data.fields[row*3 + col].getWinner())}</span>-->
                         {#if !(data.fields[0] instanceof PlayerField)}
                             <svelte:self data={data.fields[row*3 + col]} moveCallback={(a) => {moveCallback && moveCallback([row*3 + col, ...a])}} />
                         {:else}
                             {#if data.fields[row*3 + col].getWinner() === Winner.Pending}
-                                <button class="flex-1 hover:bg-gray-400 disabled:bg-red-600" on:click={() => {moveCallback && moveCallback([row*3 + col])}} disabled={!data.fields[row*3 + col].isEnabled}></button>
+                                <button class="flex-1 hover:bg-gray-300 disabled:bg-gray-500" on:click={() => {moveCallback && moveCallback([row*3 + col])}} disabled={!data.fields[row*3 + col].isEnabled}></button>
                             {:else}
                                 <svg viewBox="0 0 20 20" class="flex-1 pointer-events-none">
-                                    <text x="5" y="15">{winnerToString(data.fields[row*3 + col].getWinner())}</text>
+                                    <text x={data.fields[row*3 + col].getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="stroke: black; stroke-width: 2;">{winnerToString(data.fields[row*3 + col].getWinner())}</text>
                                 </svg>
                             {/if}
                         {/if}

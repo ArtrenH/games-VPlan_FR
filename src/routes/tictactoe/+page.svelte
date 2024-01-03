@@ -7,7 +7,7 @@
     $: currentPlayerString = winnerToString(board.sharedGameState.currentPlayer);
 </script>
 
-<main class="w-auto h-screen flex flex-row justify-center items-start gap-1">
+<main class="w-auto h-screen flex flex-col justify-start items-center gap-1 p-2">
     <span>Spieler an der Reihe: {currentPlayerString}</span>
     <BoardView bind:data={board} />
 </main>

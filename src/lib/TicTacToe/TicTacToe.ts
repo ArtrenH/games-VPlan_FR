@@ -1,3 +1,4 @@
+
 export type FieldContent = PlayerField | Board;
 
 export type SharedGameState = {
@@ -34,19 +35,19 @@ export class PlayerField extends HasWinner {
 
 export class Board extends HasWinner {
     fields: FieldContent[] & { length: 9 };
-    currentPlayerStore: SharedGameState;
+    sharedGameState: SharedGameState;
     depth: number;
 
-    constructor(depth: number = 1, currentPlayerStore: SharedGameState | null = null) {
+    constructor(depth: number = 1, sharedGameState: SharedGameState | null = null) {
         super();
         this.depth = depth;
-        this.currentPlayerStore = currentPlayerStore ?? { currentPlayer: Winner.X, lastMoves: [] };
+        this.sharedGameState = sharedGameState ?? { currentPlayer: Winner.X, lastMoves: [] };
 
         let fields: FieldContent[] & { length: 9 };
         if (depth == 1) {
             fields = [...Array(9)].map(() => new PlayerField()) as (FieldContent[] & { length: 9 });
         } else {
-            fields = [...Array(9)].map(() => new Board(depth - 1, this.currentPlayerStore)) as (FieldContent[] & { length: 9 });
+            fields = [...Array(9)].map(() => new Board(depth - 1, this.sharedGameState)) as (FieldContent[] & { length: 9 });
         }
         this.fields = fields;
     }
@@ -63,48 +64,58 @@ export class Board extends HasWinner {
         }
     }
 
-    /*
-     * TODO: if a sub board is won or full, enable all fields one level higher
-     */
-    enableFields(): boolean {
-        let out: boolean = false;
-        if (this.depth === 1) { // enable all available fields of lowest level board
+    enableAvailable() {
+        if (this.depth === 1) {
             this.fields.forEach(field => {
-                field = field as PlayerField;
-                field.isEnabled = field.getWinner() == Winner.Pending;
-                out ||= field.isEnabled;
+                if ((field as PlayerField).value === Winner.Pending) {
+                    (field as PlayerField).isEnabled = true;
+                }
             })
         } else {
-            let currField = this.currentPlayerStore.lastMoves[this.currentPlayerStore.lastMoves.length - this.depth];
-            if (typeof currField === "undefined") { // board was just initialized, not enough moves were made
-                this.fields.forEach(field => {out ||= (field as Board).enableFields()});
-            } else { // fields of next sub-board are enabled
-                
-                out ||= (this.fields[currField] as Board).enableFields();
-            }
-
+            this.fields.forEach(field => (field as Board).enableAvailable())
         }
-        return out;
+    }
+
+    /**
+     * 
+     */
+    enableFields() {
+        if (this.depth === 1) {
+            this.enableAvailable()
+        } else {
+            let currField = this.sharedGameState.lastMoves[this.sharedGameState.lastMoves.length - this.depth];
+            if (typeof currField === "undefined") { // board was just initialized, not enough moves were made
+                this.fields.forEach(field => (field as Board).enableFields());
+            } else {
+                // winner is pending => next sub-board is found and enabled
+                if ((this.fields[currField] as Board).getWinner() === Winner.Pending) {
+                    (this.fields[currField] as Board).enableFields();
+                // next subboard is not pending anymore => all fields of current board are enabled
+                } else {
+                    this.enableAvailable()
+                }
+            }
+        }
     }
 
 
     /**
      * returns if move could be executed
      */
-    _doMove(fieldNum: number): boolean {
+    _doMove(fieldNums: number[]): boolean {
+        if (!(0 <= fieldNums[0] && fieldNums[0] <= 9)) {
+            throw new Error("HIHI")
+        }
         if (this.depth === 1) { // lowes level reached => make move there
-            if (!(0 <= fieldNum && fieldNum <= 9)) {
-                return false;
+            this.fields[fieldNums[0]] = new PlayerField(this.sharedGameState.currentPlayer);
+            if (this.sharedGameState.currentPlayer === Winner.X) {
+                this.sharedGameState.currentPlayer = Winner.O;
+            } else {
+                this.sharedGameState.currentPlayer = Winner.X;
             }
-            if (this.fields[fieldNum]) {
-                return false;
-            }
-            this.fields[fieldNum] = new PlayerField(this.currentPlayerStore.currentPlayer);
-            this.currentPlayerStore.lastMoves.push(fieldNum);
             return true;
         } else { // lowest level not yet reached => move delegated to right sub-board (its position is based on previous moves)
-            let currField = this.currentPlayerStore.lastMoves[this.currentPlayerStore.lastMoves.length - this.depth];
-            return (this.fields[currField] as Board)._doMove(fieldNum);
+            return (this.fields[fieldNums[0]] as Board)._doMove(fieldNums.slice(1));
         }
     }
 
@@ -113,8 +124,14 @@ export class Board extends HasWinner {
      * disable all fields
      * enable all new fields
      */
-    doMove(fieldNum: number) {
-        this._doMove(fieldNum);
+    doMove(fieldNums: number[]) {
+        this._doMove(fieldNums);
+        if (this.sharedGameState.lastMoves.length === 0) {
+            console.log(fieldNums);
+            this.sharedGameState.lastMoves = fieldNums.slice(1);
+        } else {
+            this.sharedGameState.lastMoves.push(fieldNums[fieldNums.length-1]);
+        }
         this.disableAll();
         this.enableFields();
     }
@@ -158,5 +175,21 @@ export class Board extends HasWinner {
         }
         // win not yet decided
         return Winner.Pending;
+    }
+}
+
+export function winnerToString(value: Winner): string {
+    switch(value) {
+        case Winner.X:
+            return "X";
+        case Winner.O:
+            return "O";
+        case Winner.Draw:
+            return "Draw";
+        case Winner.Pending:
+            return "P";
+        default:
+            const _exhaustiveCheck: never = value;
+            return _exhaustiveCheck;
     }
 }

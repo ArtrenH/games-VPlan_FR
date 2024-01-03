@@ -1,40 +1,42 @@
 <script lang="ts">
-    import { Winner, Board, PlayerField } from "./TicTacToe";
-
-    function mapWinner(value: Winner): string {
-        switch(value) {
-            case Winner.X:
-                return "X";
-            case Winner.O:
-                return "O";
-            case Winner.Draw:
-                return "Draw";
-            case Winner.Pending:
-                return "P";
-            default:
-                const _exhaustiveCheck: never = value;
-                return _exhaustiveCheck;
-        }
-    }
+    import { Winner, Board, PlayerField, winnerToString } from "./TicTacToe";
 
     export let data: Board;
+    export let moveCallback: ((fieldNumber: number[]) => void) | null = null;
+    if(moveCallback === null) {
+        moveCallback = a => {
+            console.log(a);
+            console.log(data);
+            data.doMove(a);
+            data = data;
+            console.log(data);
+        };
+    }
 </script>
 
-<div class="flex flex-col justify-evenly border-black border-2 rounded-md w-full aspect-square">
+<div class="flex flex-col aspect-square h-full">
     {#if data.fields && data.fields.length === 9}
         {#each {length: 3} as _, row}
-            <div class="flex flex-row justify-evenly">
+            <div class="flex flex-row flex-1">
                 {#each {length: 3} as _, col}
-                    <div class="flex flex-1">
-                        <span class="">{mapWinner(data.fields[row*3 + col].getWinner())}</span>
+                    <div class="flex flex-1 justify-center items-stretch border-black border-[1px]">
+                        <!--<span class="">{winnerToString(data.fields[row*3 + col].getWinner())}</span>-->
                         {#if !(data.fields[0] instanceof PlayerField)}
-                            <svelte:self data={data.fields[0]} />
+                            <svelte:self data={data.fields[row*3 + col]} moveCallback={(a) => {moveCallback && moveCallback([row*3 + col, ...a])}} />
+                        {:else}
+                            {#if data.fields[row*3 + col].getWinner() === Winner.Pending}
+                                <button class="flex-1 hover:bg-gray-400 disabled:bg-red-600" on:click={() => {moveCallback && moveCallback([row*3 + col])}} disabled={!data.fields[row*3 + col].isEnabled}></button>
+                            {:else}
+                                <svg viewBox="0 0 20 20" class="flex-1 pointer-events-none">
+                                    <text x="5" y="15">{winnerToString(data.fields[row*3 + col].getWinner())}</text>
+                                </svg>
+                            {/if}
                         {/if}
                     </div>
                 {/each}
             </div>
         {/each}
     {:else}
-        <span class="font-bold text-red-600">Womp womp :(</span>
+        <span class="font-bold text-red-600">Womp womp :()</span>
     {/if}
 </div>

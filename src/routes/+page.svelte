@@ -1,7 +1,6 @@
 <script lang="ts">
     const games = {
-        tictactoe: "TicTacToe",
-        blub: "BLUB :D"
+        tictactoe: "TicTacToe"
     }
 </script>
 

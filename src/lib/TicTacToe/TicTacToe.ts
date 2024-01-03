@@ -1,11 +1,10 @@
-
-export type FieldContent = PlayerField | Board;
-
+// shared accross a board and all its sub-boards
 export type SharedGameState = {
     currentPlayer: Exclude<Winner, Winner.Draw>;
     lastMoves: number[];
 };
 
+// winning states of a PlayerField or Board
 export enum Winner {
     X,
     O,
@@ -13,11 +12,14 @@ export enum Winner {
     Pending
 }
 
-export abstract class HasWinner {
+/**
+ * either a PlayerField or a Board later-on
+ */
+export abstract class FieldContent {
     abstract getWinner(): Winner;
 }
 
-export class PlayerField extends HasWinner {
+export class PlayerField extends FieldContent {
     value: Exclude<Winner, Winner.Draw>;
 
     isEnabled: boolean = true;
@@ -33,7 +35,7 @@ export class PlayerField extends HasWinner {
 }
 
 
-export class Board extends HasWinner {
+export class Board extends FieldContent {
     fields: FieldContent[] & { length: 9 };
     sharedGameState: SharedGameState;
     depth: number;
@@ -52,6 +54,9 @@ export class Board extends HasWinner {
         this.fields = fields;
     }
 
+    /**
+     * recursivly disables all fields of a board
+     */
     disableAll() {
         if (this.depth === 1) {
             this.fields.forEach(field => {
@@ -64,33 +69,40 @@ export class Board extends HasWinner {
         }
     }
 
+    /**
+     * recursivly handles enabling fields that would be valid next moves
+     */
     enableAvailable() {
-        if (this.depth === 1) {
-            this.fields.forEach(field => {
-                if ((field as PlayerField).value === Winner.Pending) {
-                    (field as PlayerField).isEnabled = true;
-                }
-            })
-        } else {
-            this.fields.forEach(field => (field as Board).enableAvailable())
+        if (this.getWinner() === Winner.Pending) {
+            if (this.depth === 1) {
+                this.fields.forEach(field => {
+                    if ((field as PlayerField).getWinner() === Winner.Pending) {
+                        (field as PlayerField).isEnabled = true;
+                    }
+                })
+            } else {
+
+                this.fields.forEach(field => (field as Board).enableAvailable())
+            }
         }
     }
 
     /**
-     * 
+     * based on last moves -> finds lowest level board with pending fields and enables them
      */
     enableFields() {
         if (this.depth === 1) {
             this.enableAvailable()
         } else {
             let currField = this.sharedGameState.lastMoves[this.sharedGameState.lastMoves.length - this.depth + 1];
-            if (typeof currField === "undefined") { // board was just initialized, not enough moves were made
+            // board was just initialized, not enough moves were made
+            if (typeof currField === "undefined") {
                 this.fields.forEach(field => (field as Board).enableFields());
             } else {
                 // winner is pending => next sub-board is found and enabled
                 if ((this.fields[currField] as Board).getWinner() === Winner.Pending) {
                     (this.fields[currField] as Board).enableFields();
-                // next subboard is not pending anymore => all fields of current board are enabled
+                // next sub-board is not pending anymore => all fields of current board are enabled
                 } else {
                     this.enableAvailable()
                 }
@@ -101,12 +113,14 @@ export class Board extends HasWinner {
 
     /**
      * returns if move could be executed
+     * requires list of sub boards from top to bottom lebel
      */
     _doMove(fieldNums: number[]): boolean {
         if (!(0 <= fieldNums[0] && fieldNums[0] <= 9)) {
             throw new Error("HIHI")
         }
-        if (this.depth === 1) { // lowes level reached => make move there
+        // lowes level reached => make move there
+        if (this.depth === 1) {
             this.fields[fieldNums[0]] = new PlayerField(this.sharedGameState.currentPlayer);
             if (this.sharedGameState.currentPlayer === Winner.X) {
                 this.sharedGameState.currentPlayer = Winner.O;
@@ -114,21 +128,19 @@ export class Board extends HasWinner {
                 this.sharedGameState.currentPlayer = Winner.X;
             }
             return true;
-        } else { // lowest level not yet reached => move delegated to right sub-board (its position is based on previous moves)
+        // lowest level not yet reached => move delegated to right sub-board (its position is based on previous moves)
+        } else {
             return (this.fields[fieldNums[0]] as Board)._doMove(fieldNums.slice(1));
         }
     }
 
-    /**
-     * execute the move
-     * disable all fields
-     * enable all new fields
-     */
     doMove(fieldNums: number[]) {
+        // actually do the move
         this._doMove(fieldNums);
+        // fill list with last moves at begin
         if (this.sharedGameState.lastMoves.length === 0) {
-            console.log(fieldNums);
             this.sharedGameState.lastMoves = fieldNums;
+        // add new move to the last moves
         } else {
             this.sharedGameState.lastMoves.push(fieldNums[fieldNums.length-1]);
         }
@@ -160,7 +172,7 @@ export class Board extends HasWinner {
         if (this.fields[2].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[6].getWinner()) {
             return this.fields[4].getWinner();
         }
-        // check if field is full
+        // check for draw (field is full)
         let all_decided = true;
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {

@@ -19,9 +19,15 @@
         {#each {length: 3} as _, row}
             <div class="flex flex-row flex-1">
                 {#each {length: 3} as _, col}
-                    <div class="flex flex-1 justify-center items-stretch border-gray-800 border-[1px]">
-                        <!--<span class="">{winnerToString(data.fields[row*3 + col].getWinner())}</span>-->
+                    <div class="flex flex-1 relative justify-center items-stretch border-gray-800 border-[1px]">
                         {#if !(data.fields[0] instanceof PlayerField)}
+                            {#if data.fields[row*3 + col].getWinner() != Winner.Pending}
+                                <div class="absolute z-10 pointer-events-none bg-[#fffA]">
+                                    <svg viewBox="0 0 20 20" class="w-full h-full">
+                                        <text x={data.fields[row*3 + col].getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="stroke: black; stroke-width: 2;">{winnerToString(data.fields[row*3 + col].getWinner())}</text>
+                                    </svg>
+                                </div>
+                            {/if}
                             <svelte:self data={data.fields[row*3 + col]} moveCallback={(a) => {moveCallback && moveCallback([row*3 + col, ...a])}} />
                         {:else}
                             {#if data.fields[row*3 + col].getWinner() === Winner.Pending}

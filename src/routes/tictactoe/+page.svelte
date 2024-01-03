@@ -2,7 +2,7 @@
     import { Board, Winner, winnerToString } from "$lib/TicTacToe/TicTacToe";
     import BoardView from "$lib/TicTacToe/BoardView.svelte";
 
-    let board = new Board(1);
+    let board = new Board(2);
     let currentPlayerString: string;
     $: currentPlayerString = winnerToString(board.sharedGameState.currentPlayer);
 </script>

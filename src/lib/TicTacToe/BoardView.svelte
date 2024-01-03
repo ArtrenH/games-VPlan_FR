@@ -5,15 +5,19 @@
     export let moveCallback: ((fieldNumber: number[]) => void) | null = null;
     if(moveCallback === null) {
         moveCallback = a => {
-            console.log(a);
-            console.log(data);
             data.doMove(a);
             data = data;
-            console.log(data);
         };
     }
 </script>
 
+{#if data.getWinner() != Winner.Pending}
+    <div class="absolute transition-opacity z-10 w-full h-full bg-[#fff8] hover:opacity-0">
+        <svg viewBox="0 0 20 20" class="w-full h-full">
+            <text x={data.getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="stroke: black; stroke-width: 2;">{winnerToString(data.getWinner())}</text>
+        </svg>
+    </div>
+{/if}
 <div class="flex flex-col aspect-square h-full">
     {#if data.fields && data.fields.length === 9}
         {#each {length: 3} as _, row}
@@ -21,13 +25,6 @@
                 {#each {length: 3} as _, col}
                     <div class="flex flex-1 relative justify-center items-stretch border-gray-800 border-[1px]">
                         {#if !(data.fields[0] instanceof PlayerField)}
-                            {#if data.fields[row*3 + col].getWinner() != Winner.Pending}
-                                <div class="absolute z-10 pointer-events-none bg-[#fffA]">
-                                    <svg viewBox="0 0 20 20" class="w-full h-full">
-                                        <text x={data.fields[row*3 + col].getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="stroke: black; stroke-width: 2;">{winnerToString(data.fields[row*3 + col].getWinner())}</text>
-                                    </svg>
-                                </div>
-                            {/if}
                             <svelte:self data={data.fields[row*3 + col]} moveCallback={(a) => {moveCallback && moveCallback([row*3 + col, ...a])}} />
                         {:else}
                             {#if data.fields[row*3 + col].getWinner() === Winner.Pending}

@@ -2,14 +2,16 @@
     import { Board, winnerToString } from "$lib/TicTacToe/TicTacToe";
     import BoardView from "$lib/TicTacToe/BoardView.svelte";
 
-    let board = new Board(1);
+    let board = new Board(2);
     let currentPlayerString: string;
     $: currentPlayerString = winnerToString(board.sharedGameState.currentPlayer);
 </script>
 
 <main class="w-auto h-screen flex flex-col justify-start items-center gap-1 p-2">
     <span class="font-semibold relative mb-2 db-accent-line">Spieler an der Reihe: {currentPlayerString}</span>
-    <BoardView bind:data={board} />
+    <div class="flex flex-1 relative justify-center items-stretch aspect-square">
+        <BoardView bind:data={board} />
+    </div>
 </main>
 
 <style lang="postcss">

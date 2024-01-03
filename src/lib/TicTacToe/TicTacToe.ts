@@ -152,8 +152,8 @@ export class Board extends FieldContent {
         // check if a row is won
         for (let i = 0; i < 3; i++) {
             if (this.fields[3 * i].getWinner() === this.fields[3 * i + 1].getWinner() && this.fields[3 * i + 1].getWinner() === this.fields[3 * i + 2].getWinner()) {
-                if (this.fields[3 * i]!.getWinner() !== Winner.Draw) {
-                    return this.fields[3 * i]!.getWinner();
+                if (this.fields[3 * i].getWinner() !== Winner.Draw) {
+                    return this.fields[3 * i].getWinner();
                 }
             }
         }
@@ -166,7 +166,7 @@ export class Board extends FieldContent {
             }
         }
         // check if a diagonal is won
-        if (this.fields[0].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[9].getWinner()) {
+        if (this.fields[0].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[8].getWinner()) {
             return this.fields[4].getWinner();
         }
         if (this.fields[2].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[6].getWinner()) {

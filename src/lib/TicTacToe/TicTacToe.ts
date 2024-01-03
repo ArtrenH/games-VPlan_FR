@@ -73,17 +73,18 @@ export class Board extends FieldContent {
      * recursivly handles enabling fields that would be valid next moves
      */
     enableAvailable() {
-        if (this.getWinner() === Winner.Pending) {
-            if (this.depth === 1) {
-                this.fields.forEach(field => {
-                    if ((field as PlayerField).getWinner() === Winner.Pending) {
-                        (field as PlayerField).isEnabled = true;
-                    }
-                })
-            } else {
+        if (this.getWinner() !== Winner.Pending) {
+            return
+        }
+        if (this.depth === 1) {
+            this.fields.forEach(field => {
+                if ((field as PlayerField).getWinner() === Winner.Pending) {
+                    (field as PlayerField).isEnabled = true;
+                }
+            })
+        } else {
 
-                this.fields.forEach(field => (field as Board).enableAvailable())
-            }
+            this.fields.forEach(field => (field as Board).enableAvailable())
         }
     }
 
@@ -91,6 +92,9 @@ export class Board extends FieldContent {
      * based on last moves -> finds lowest level board with pending fields and enables them
      */
     enableFields() {
+        if (this.getWinner() !== Winner.Pending) {
+            return
+        }
         if (this.depth === 1) {
             this.enableAvailable()
         } else {
@@ -152,25 +156,30 @@ export class Board extends FieldContent {
         // check if a row is won
         for (let i = 0; i < 3; i++) {
             if (this.fields[3 * i].getWinner() === this.fields[3 * i + 1].getWinner() && this.fields[3 * i + 1].getWinner() === this.fields[3 * i + 2].getWinner()) {
-                if (this.fields[3 * i]!.getWinner() !== Winner.Draw) {
-                    return this.fields[3 * i]!.getWinner();
+                if (this.fields[3 * i].getWinner() !== Winner.Draw && this.fields[3 * i].getWinner() !== Winner.Pending) {
+                    console.log("winner found");
+                    return this.fields[3 * i].getWinner();
                 }
             }
         }
         // check if a column is won
         for (let i = 0; i < 3; i++) {
             if (this.fields[i].getWinner() === this.fields[3 + i].getWinner() && this.fields[3 + i].getWinner() === this.fields[6 + i].getWinner()) {
-                if (this.fields[i].getWinner() !== Winner.Draw) {
+                if (this.fields[i].getWinner() !== Winner.Draw && this.fields[i].getWinner() !== Winner.Pending) {
                     return this.fields[i].getWinner();
                 }
             }
         }
         // check if a diagonal is won
-        if (this.fields[0].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[9].getWinner()) {
-            return this.fields[4].getWinner();
+        if (this.fields[0].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[8].getWinner()) {
+            if (this.fields[4].getWinner() !== Winner.Draw && this.fields[4].getWinner() !== Winner.Pending) {
+                return this.fields[4].getWinner();
+            }
         }
         if (this.fields[2].getWinner() === this.fields[4].getWinner() && this.fields[4].getWinner() === this.fields[6].getWinner()) {
-            return this.fields[4].getWinner();
+            if (this.fields[4].getWinner() !== Winner.Draw && this.fields[4].getWinner() !== Winner.Pending) {
+                return this.fields[4].getWinner();
+            }
         }
         // check for draw (field is full)
         let all_decided = true;

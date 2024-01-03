@@ -18,4 +18,6 @@
 {#if $page.url.pathname !== "/"}
     <a class="absolute top-1 left-1" style="view-transition-name: {$page.url.pathname.slice(1)};" href="/">Zurück</a>
 {/if}
-<slot />
+<div class="mt-6">
+    <slot />
+</div>

@@ -7,10 +7,12 @@
     $: currentPlayerString = winnerToString(board.sharedGameState.currentPlayer);
 </script>
 
-<main class="w-auto h-screen flex flex-col justify-start items-center gap-1 p-2">
+<main class="flex flex-col justify-start items-center gap-1 p-2 m-auto" style="width: calc(100vmin - 1.5rem); height: calc(100vmin - 1.5rem);">
     <span class="font-semibold relative mb-2 db-accent-line">
     {#if board.getWinner() === Winner.Pending}
         Spieler an der Reihe: {currentPlayerString}
+    {:else if board.getWinner() === Winner.Draw}
+        Unentschieden 🤯
     {:else}
         {winnerToString(board.getWinner())} hat gewonnen :D 🎉🎉🎉
     {/if}

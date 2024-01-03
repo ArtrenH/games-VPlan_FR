@@ -25,7 +25,7 @@
                             <svelte:self data={data.fields[row*3 + col]} moveCallback={(a) => {moveCallback && moveCallback([row*3 + col, ...a])}} />
                         {:else}
                             {#if data.fields[row*3 + col].getWinner() === Winner.Pending}
-                                <button class="flex-1 hover:bg-gray-300 disabled:bg-gray-500" on:click={() => {moveCallback && moveCallback([row*3 + col])}} disabled={!data.fields[row*3 + col].isEnabled}></button>
+                                <button class="flex-1 transition-colors hover:bg-gray-400 disabled:bg-[#48547c]" on:click={() => {moveCallback && moveCallback([row*3 + col])}} disabled={!data.fields[row*3 + col].isEnabled}></button>
                             {:else}
                                 <svg viewBox="0 0 20 20" class="flex-1 pointer-events-none">
                                     <text x={data.fields[row*3 + col].getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="stroke: black; stroke-width: 2;">{winnerToString(data.fields[row*3 + col].getWinner())}</text>

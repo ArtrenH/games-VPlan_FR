@@ -157,7 +157,6 @@ export class Board extends FieldContent {
         for (let i = 0; i < 3; i++) {
             if (this.fields[3 * i].getWinner() === this.fields[3 * i + 1].getWinner() && this.fields[3 * i + 1].getWinner() === this.fields[3 * i + 2].getWinner()) {
                 if (this.fields[3 * i].getWinner() !== Winner.Draw && this.fields[3 * i].getWinner() !== Winner.Pending) {
-                    console.log("winner found");
                     return this.fields[3 * i].getWinner();
                 }
             }

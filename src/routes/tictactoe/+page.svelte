@@ -5,6 +5,6 @@
     let board = new Board(3);
 </script>
 
-<main>
+<main class="w-auto h-screen flex justify-center items-center">
     <BoardView data={board} />
 </main>

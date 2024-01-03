@@ -1,14 +1,20 @@
 <script lang="ts">
-    import { Board, winnerToString } from "$lib/TicTacToe/TicTacToe";
+    import { Board, Winner, winnerToString } from "$lib/TicTacToe/TicTacToe";
     import BoardView from "$lib/TicTacToe/BoardView.svelte";
 
-    let board = new Board(2);
+    let board = new Board(1);
     let currentPlayerString: string;
     $: currentPlayerString = winnerToString(board.sharedGameState.currentPlayer);
 </script>
 
 <main class="w-auto h-screen flex flex-col justify-start items-center gap-1 p-2">
-    <span class="font-semibold relative mb-2 db-accent-line">Spieler an der Reihe: {currentPlayerString}</span>
+    <span class="font-semibold relative mb-2 db-accent-line">
+    {#if board.getWinner() === Winner.Pending}
+        Spieler an der Reihe: {currentPlayerString}
+    {:else}
+        {winnerToString(board.getWinner())} hat gewonnen :D 🎉🎉🎉
+    {/if}
+    </span>
     <div class="flex flex-1 relative justify-center items-stretch aspect-square">
         <BoardView bind:data={board} />
     </div>

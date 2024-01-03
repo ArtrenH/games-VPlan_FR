@@ -205,9 +205,9 @@ export function winnerToString(value: Winner): string {
         case Winner.O:
             return "O";
         case Winner.Draw:
-            return "Draw";
+            return "%";
         case Winner.Pending:
-            return "P";
+            return "";
         default:
             const _exhaustiveCheck: never = value;
             return _exhaustiveCheck;

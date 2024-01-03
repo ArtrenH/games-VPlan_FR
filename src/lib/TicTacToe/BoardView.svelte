@@ -12,9 +12,9 @@
 </script>
 
 {#if data.getWinner() != Winner.Pending}
-    <div class="absolute transition-opacity z-10 w-full h-full bg-[#fff8] hover:opacity-0">
+    <div class="absolute transition-opacity w-full h-full bg-[#fff8] hover:opacity-0" style="z-index: {data.depth}">
         <svg viewBox="0 0 20 20" class="w-full h-full">
-            <text x={data.getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="stroke: black; stroke-width: 2;">{winnerToString(data.getWinner())}</text>
+            <text x={data.getWinner() === Winner.X ? "5.3" : "3.7"} y="16" style="fill: #0000; stroke: #000B; stroke-width: 2;">{winnerToString(data.getWinner())}</text>
         </svg>
     </div>
 {/if}

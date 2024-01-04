@@ -132,7 +132,7 @@ export class Board extends FieldContent {
                 this.sharedGameState.currentPlayer = Winner.X;
             }
             return true;
-        // lowest level not yet reached => move delegated to right sub-board (its position is based on previous moves)
+            // lowest level not yet reached => move delegated to right sub-board (its position is based on previous moves)
         } else {
             return (this.fields[fieldNums[0]] as Board)._doMove(fieldNums.slice(1));
         }
@@ -144,9 +144,9 @@ export class Board extends FieldContent {
         // fill list with last moves at begin
         if (this.sharedGameState.lastMoves.length === 0) {
             this.sharedGameState.lastMoves = fieldNums;
-        // add new move to the last moves
+            // add new move to the last moves
         } else {
-            this.sharedGameState.lastMoves.push(fieldNums[fieldNums.length-1]);
+            this.sharedGameState.lastMoves.push(fieldNums[fieldNums.length - 1]);
         }
         this.disableAll();
         this.enableFields();
@@ -199,7 +199,7 @@ export class Board extends FieldContent {
 }
 
 export function winnerToString(value: Winner): string {
-    switch(value) {
+    switch (value) {
         case Winner.X:
             return "X";
         case Winner.O:

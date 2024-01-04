@@ -25,6 +25,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@types/dom-view-transitions": "^1.0.4"
+		"@popperjs/core": "^2.11.8",
+		"@types/dom-view-transitions": "^1.0.4",
+		"flowbite": "^2.2.1",
+		"flowbite-svelte": "^0.44.21",
+		"tailwind-merge": "^2.2.0"
 	}
 }

@@ -2,8 +2,11 @@
     import { Board, Winner, winnerToString } from "$lib/TicTacToe/TicTacToe";
     import BoardView from "$lib/TicTacToe/BoardView.svelte";
     import NavContentLayout from "$lib/NavContentLayout.svelte";
+    import { Button, DropdownItem } from "flowbite-svelte";
 
-    let board = new Board(2);
+    let depth = 2;
+    let board: Board;
+    $: board = new Board(depth);
     let currentPlayerString: string;
     $: currentPlayerString = winnerToString(board.sharedGameState.currentPlayer);
 </script>
@@ -24,7 +27,13 @@
         </div>
     </main>
     <div slot="settings">
-        test
+        <DropdownItem>            
+            <label for="minmax-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tiefe {depth}</label>
+            <input id="minmax-range" type="range" min="1" max="4" bind:value={depth} class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+        </DropdownItem>
+        <DropdownItem>
+            <Button on:click={() => {board = new Board(depth)}} class="w-full">Board resetten</Button>
+        </DropdownItem>
     </div>
 </NavContentLayout>
 

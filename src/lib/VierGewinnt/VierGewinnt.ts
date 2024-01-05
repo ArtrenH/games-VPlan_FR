@@ -10,7 +10,7 @@ type Player = Exclude<PlayerField, Winner.Pending>;
 
 export class Board {
     columns: PlayerField[][];
-    current_player: Player = Winner.Red;
+    currentPlayer: Player = Winner.Red;
 
     constructor(height: number, width: number) {
         this.columns = [];
@@ -29,11 +29,11 @@ export class Board {
         while (this.columns[column][index] === Winner.Pending) {
             index++;
         }
-        this.columns[column][index-1] = this.current_player;
-        if (this.current_player === Winner.Red) {
-            this.current_player = Winner.Yellow;
+        this.columns[column][index-1] = this.currentPlayer;
+        if (this.currentPlayer === Winner.Red) {
+            this.currentPlayer = Winner.Yellow;
         } else {
-            this.current_player = Winner.Red;
+            this.currentPlayer = Winner.Red;
         }
     }
 
@@ -104,9 +104,9 @@ export class Board {
 export function winnerToString(value: Winner): string {
     switch (value) {
         case Winner.Red:
-            return "R";
+            return "Rot";
         case Winner.Yellow:
-            return "Y";
+            return "Gelb";
         case Winner.Draw:
             return "%";
         case Winner.Pending:

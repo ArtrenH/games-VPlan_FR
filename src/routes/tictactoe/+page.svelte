@@ -12,8 +12,7 @@
 </script>
 
 <NavContentLayout>
-    <main class="flex flex-col justify-start items-center gap-1 p-2 m-auto" style="width: calc(100vmin - 1.75rem); height: calc(100vmin - 1.75rem);">
-        <span class="font-semibold relative mb-2 db-accent-line">
+    <span class="font-semibold relative mb-2 text-nowrap db-accent-line">
         {#if board.getWinner() === Winner.Pending}
             Spieler an der Reihe: {currentPlayerString}
         {:else if board.getWinner() === Winner.Draw}
@@ -21,11 +20,10 @@
         {:else}
             {winnerToString(board.getWinner())} hat gewonnen :D 🎉🎉🎉
         {/if}
-        </span>
-        <div class="flex flex-1 relative justify-center items-stretch aspect-square">
-            <BoardView bind:data={board} />
-        </div>
-    </main>
+    </span>
+    <div class="flex flex-1 relative justify-center items-stretch aspect-square">
+        <BoardView bind:data={board} />
+    </div>
     <div slot="settings">
         <DropdownItem>            
             <label for="minmax-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tiefe {depth}</label>

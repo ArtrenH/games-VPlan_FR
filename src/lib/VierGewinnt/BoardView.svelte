@@ -4,39 +4,29 @@
     export let board: Board;
 </script>
 
-{#if board.getWinner() != Winner.Pending}
-    Gewonnen hat: {winnerToString(board.getWinner())} !!!
-{/if}
-<div class="container">
+<div class="flex flex-row gap-1 w-full bg-[#48547c] p-1 rounded-md">
     {#each board.columns as column, index}
-    <div class="box">
-        <br>
-        <button on:click={() => {board.doMove(index); board = board}}>X</button>
-        {#each column as field}
-        <div class="box2">
-            {winnerToString(field)}
-        </div>
-        {/each}
-    </div>
+      <div class="flex flex-col gap-1 flex-1">
+          <button on:click={() => {board.doMove(index); board = board}} class="aspect-square flex justify-center items-center">
+            <svg class="w-7 h-7 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+            </svg>
+          </button>
+          {#each column as field}
+          <div class="flex-1 justify-center items-center">
+            <div class="aspect-square rounded-full bg-white" class:red={field === Winner.Red} class:yellow={field === Winner.Yellow}></div>
+          </div>
+          {/each}
+      </div>
     {/each}
 </div>
 
-
 <style>
-    .container {
-      display: flex;
+    .red {
+        background: #e60000;
     }
-
-    .box {
-      width: 100px;
-      height: 100px;
-      margin: 10px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .box2 {
-      margin: 10px;
-      border: 1px solid #000;
+    
+    .yellow {
+        background: #e6d700;
     }
 </style>
